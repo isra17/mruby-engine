@@ -65,7 +65,9 @@ static void *mruby_engine_monitored_eval(void *data) {
   }
   pthread_testcancel();
 
+  me_memory_pool_verbose(self->allocator, self->verbose);
   mrb_context_run(self->state, &self->eval_state.proc->proc, mrb_top_self(self->state), 0);
+  me_memory_pool_verbose(self->allocator, 0);
 
   pthread_cleanup_pop(true);
   return NULL;
@@ -176,7 +178,7 @@ void me_mruby_engine_eval(
       self->cpu_time_ns = err_no * -1; // -(EINVAL = 22 || EFAULT == 14)
     } else {
       self->cpu_time_ns = ts.tv_sec * 1000000000 + ts.tv_nsec;
-    } 
+    }
   }
 
   if(!bypass_ctx && !getrusage(RUSAGE_SELF, &ru_now)) {

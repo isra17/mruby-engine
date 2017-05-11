@@ -130,7 +130,13 @@ static VALUE ext_mruby_engine_initialize(int argc, VALUE *argv, VALUE rself) {
   VALUE rcapacity;
   VALUE r_instruction_quota;
   VALUE r_time_quota_s;
-  rb_scan_args(argc, argv, "3", &rcapacity, &r_instruction_quota, &r_time_quota_s);
+  VALUE r_verbose;
+  VALUE r_base_address;
+
+  rb_scan_args(argc, argv, "32", &rcapacity, &r_instruction_quota, &r_time_quota_s, &r_verbose, &r_base_address);
+
+  if (NIL_P(r_verbose)) r_verbose = Qfalse;
+  if (NIL_P(r_base_address)) r_base_address = LONG2NUM(0);;
 
   long capacity = NUM2LONG(rcapacity);
   if (capacity <= 0) {
@@ -149,7 +155,7 @@ static VALUE ext_mruby_engine_initialize(int argc, VALUE *argv, VALUE rself) {
   }
 
   struct me_memory_pool_err err = { 0 };
-  struct me_memory_pool *allocator = me_memory_pool_new(capacity, &err);
+  struct me_memory_pool *allocator = me_memory_pool_new(capacity, &err, r_verbose == Qtrue, (void*)NUM2LONG(r_base_address));
   check_memory_pool_err(&err);
 
   struct timespec time_quota = (struct timespec){
@@ -160,7 +166,8 @@ static VALUE ext_mruby_engine_initialize(int argc, VALUE *argv, VALUE rself) {
   struct me_mruby_engine *engine = me_mruby_engine_new(
     allocator,
     instruction_quota,
-    time_quota);
+    time_quota,
+    r_verbose == Qtrue);
   if (engine == NULL) {
     me_memory_pool_destroy(allocator);
     me_host_exception_t exception = me_host_internal_error_new("failed to initialize mruby");
@@ -328,7 +335,7 @@ static VALUE ext_iseq_initialize(VALUE rself, VALUE rsources) {
   sources[source_count] = (struct me_source){0};
 
   struct me_memory_pool_err pool_err;
-  struct me_memory_pool *allocator = me_memory_pool_new(COMPILE_MEMORY_CAPACITY, &pool_err);
+  struct me_memory_pool *allocator = me_memory_pool_new(COMPILE_MEMORY_CAPACITY, &pool_err, 0, 0);
   check_memory_pool_err(&pool_err);
 
   struct me_iseq_err err;

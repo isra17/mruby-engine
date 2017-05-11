@@ -1,4 +1,5 @@
 #include "mruby_engine_private.h"
+#include "memory_pool.h"
 
 #ifndef ME_EVAL_MONITORED_P
 
@@ -7,7 +8,9 @@ void me_mruby_engine_eval(
   struct me_proc *proc,
   me_host_exception_t *err)
 {
+  me_memory_pool_verbose(self->allocator, self->verbose);
   mrb_context_run(self->state, &proc->proc, mrb_top_self(self->state), 0);
+  me_memory_pool_verbose(self->allocator, 0);
   *err = me_mruby_engine_get_exception(self);
 }
 

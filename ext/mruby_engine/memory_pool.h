@@ -35,9 +35,10 @@ struct meminfo {
 
 struct me_memory_pool;
 
-struct me_memory_pool *me_memory_pool_new(size_t capacity, struct me_memory_pool_err *err);
+struct me_memory_pool *me_memory_pool_new(size_t capacity, struct me_memory_pool_err *err, int verbose, void* base_address);
 void me_memory_pool_destroy(struct me_memory_pool *self);
 
+void me_memory_pool_verbose(struct me_memory_pool *self, int verbose);
 struct meminfo me_memory_pool_info(struct me_memory_pool *self);
 size_t me_memory_pool_get_capacity(struct me_memory_pool *self);
 void *me_memory_pool_malloc(struct me_memory_pool *self, size_t size);

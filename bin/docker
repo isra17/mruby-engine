@@ -1,0 +1,26 @@
+#!/bin/bash
+
+USAGE="Usage: $0 [mruby|mirb|gdb|...]"
+
+if [ "$#" == "0" ]; then
+	echo "$USAGE"
+	exit 1
+fi
+
+command=$1
+shift
+
+case $command in
+  mruby)
+    bin/sandbox $@
+    ;;
+  mirb)
+    bin/mruby-engine-mirb $@
+    ;;
+  gdb)
+    gdb --args ruby bin/sandbox $@
+    ;;
+  *)
+    exec $command $@
+    ;;
+esac

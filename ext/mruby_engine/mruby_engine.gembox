@@ -13,6 +13,7 @@ MRuby::GemBox.new do |conf|
   conf.gem core: 'mruby-kernel-ext'
   conf.gem core: 'mruby-compiler'
   conf.gem core: 'mruby-struct'
+  conf.gem core: 'mruby-print'
 
   conf.gem 'mruby-time'
   conf.gem 'mruby-mpdecimal'

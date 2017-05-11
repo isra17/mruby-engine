@@ -8,13 +8,25 @@ ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", File.dirname(Pathname.n
 require "rubygems"
 require "bundler/setup"
 require "mruby_engine"
+require 'optparse'
+require 'ostruct'
+
+options = OpenStruct.new
+options.verbose = false
+options.base_address = 0x1000_0000
+OptionParser.new do |opts|
+  opts.on('-v', '--verbose', 'Display information about memory allocations') { |o| options.verbose = true }
+  opts.on('-a', '--base-address BASE_ADDRESS', 'Base address for heap') { |o| options.base_address = o.to_i }
+end.parse!
 
 MEGABYTE = 1 << 20
+MAX_INT = 1<<32
 
-REASONABLE_MEMORY_QUOTA = 4 * MEGABYTE
-REASONABLE_INSTRUCTION_QUOTA = 100_000
-REASONABLE_TIME_QUOTA = 0.1r
+REASONABLE_MEMORY_QUOTA = 255 * MEGABYTE
+REASONABLE_INSTRUCTION_QUOTA = MAX_INT
+REASONABLE_TIME_QUOTA = MAX_INT
 
-engine = MRubyEngine.new(REASONABLE_MEMORY_QUOTA, REASONABLE_INSTRUCTION_QUOTA, REASONABLE_TIME_QUOTA)
+engine = MRubyEngine.new(REASONABLE_MEMORY_QUOTA, REASONABLE_INSTRUCTION_QUOTA, REASONABLE_TIME_QUOTA, options.verbose, options.base_address)
 
 engine.sandbox_eval('mruby-engine.rb', ARGF.read)
+

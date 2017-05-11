@@ -167,7 +167,8 @@ static mrb_value mruby_engine_exit(struct mrb_state *state, mrb_value rvalue) {
 struct me_mruby_engine *me_mruby_engine_new(
   struct me_memory_pool *allocator,
   uint64_t instruction_quota,
-  struct timespec time_quota)
+  struct timespec time_quota,
+  int verbose)
 {
   struct me_mruby_engine *self = me_memory_pool_malloc(allocator, sizeof(struct me_mruby_engine));
   self->allocator = allocator;
@@ -191,6 +192,7 @@ struct me_mruby_engine *me_mruby_engine_new(
   self->ctx_switches_v = -1;
   self->ctx_switches_iv = -1;
   self->cpu_time_ns = 0;
+  self->verbose = verbose;
 
   return self;
 }
@@ -345,7 +347,8 @@ struct me_iseq *me_iseq_new(
   struct me_mruby_engine *engine = me_mruby_engine_new(
     allocator,
     COMPILER_INSTRUCTION_QUOTA,
-    COMPILER_TIME_QUOTA);
+    COMPILER_TIME_QUOTA,
+    0);
 
   struct mrbc_context *context = mrbc_context_new(engine->state);
   context->no_exec = TRUE;

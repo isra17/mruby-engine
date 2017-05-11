@@ -39,6 +39,7 @@ struct me_mruby_engine {
   int64_t ctx_switches_v;
   int64_t ctx_switches_iv;
   int64_t cpu_time_ns;
+  int verbose;
 
   mrb_sym sym_to_s;
 };

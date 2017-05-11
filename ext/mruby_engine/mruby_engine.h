@@ -55,7 +55,8 @@ struct me_eval_err {
 struct me_mruby_engine *me_mruby_engine_new(
   struct me_memory_pool *allocator,
   uint64_t instruction_limit,
-  struct timespec time_quota);
+  struct timespec time_quota,
+  int verbose);
 void me_mruby_engine_destroy(struct me_mruby_engine *self);
 
 struct me_memory_pool *me_mruby_engine_get_allocator(struct me_mruby_engine *self);

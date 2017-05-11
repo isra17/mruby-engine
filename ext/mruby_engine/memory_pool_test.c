@@ -5,7 +5,7 @@
 
 static VALUE test_trigger_user_error(VALUE self) {
   struct me_memory_pool_err err;
-  struct me_memory_pool *allocator = me_memory_pool_new(1 << 22, &err);
+  struct me_memory_pool *allocator = me_memory_pool_new(1 << 22, &err, 0, 0);
   if (allocator == NULL) {
     me_host_raise(me_host_internal_error_new("failed to create memory pool"));
   }
